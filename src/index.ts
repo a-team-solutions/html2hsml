@@ -5,6 +5,7 @@ import { html2hsml } from "./html2hsml";
 interface AppState {
     html: string;
     hsml: string;
+    err: string;
 }
 
 enum Actions {
@@ -20,7 +21,8 @@ class App extends XWidget<AppState> {
 
     state = {
         html: "",
-        hsml: ""
+        hsml: "",
+        err: ""
     };
 
     view(state: AppState, action: Action): Hsmls {
@@ -50,9 +52,9 @@ class App extends XWidget<AppState> {
                     ["textarea",
                         {
                             placeholder: "HSML output will be displayed here",
-                            readonly: true,
                             rows: 30,
                             styles: {
+                                color: "grey",
                                 width: "100%",
                                 ["min-height"]: "350px"
                             }
@@ -66,26 +68,17 @@ class App extends XWidget<AppState> {
                 [
                     ["button.button", { on: ["click", Actions.onConvert] }, "Convert to HSML"]
                 ]
-            ]
-            // ["p", [
-            //     ["em", "Count"], ": ", state.count,
-            //     " ",
-            //     ["button", { on: ["click", Actions.dec, 1] }, "-"],
-            //     ["button", { on: ["click", Actions.inc, 2] }, "+"]
-            // ]],
+            ],
+            state.err && ["div", { style: { color: "darkred" } }, [
+                ["blockquote", [
+                    ["p", state.err]
+                ]]
+            ]]
+
         ];
     }
 
-    onMount(): void {
-        console.log("mount", this.type, XWidget.mounted);
-    }
-
-    onUmount(): void {
-        console.log("umount", this.type, XWidget.mounted);
-    }
-
     onAction(action: string, data?: HsmlAttrOnData): void {
-        console.log("action:", action, data);
         switch (action) {
 
             case Actions.onChange:
@@ -93,8 +86,14 @@ class App extends XWidget<AppState> {
                 this.update();
                 break;
             case Actions.onConvert:
-                const hsml = html2hsml(this.state.html);
-                this.state.hsml = JSON.stringify(hsml, null, 2);
+                try {
+                    const hsml = html2hsml(this.state.html);
+                    const prettyHsml = JSON.stringify(hsml, null, 4).replace(/\[\s+"/mg, `["`);
+                    this.state.hsml = prettyHsml;
+                    this.state.err = "";
+                } catch(err) {
+                    this.state.err = "Error while parsing, please make sure you have corrected HTML";
+                }
                 this.update();
                 break;
         }

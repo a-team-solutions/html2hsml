@@ -9,21 +9,17 @@ export function html2hsml(html: string): any {
     let pointer = root;
 
     parser.onerror = error => {
-        console.error("error:\t", error);
+        console.error(error);
     };
 
     parser.ontext = text => {
-        // console.log("text:\t", JSON.stringify(text));
-        // console.log(jsonml, jsonmlNode, jsonmlPath);
         const textTrimmed = text.trim().replace(/\s+/mg, " ");
-        // console.log("text:\t", JSON.stringify(textTrimmed));
         if (textTrimmed) {
             pointer[pointer.length - 1].push(textTrimmed);
         }
     };
 
     parser.onopentag = node => {
-        // console.log("open:\t", JSON.stringify(node));
         const attrKeys = Object.keys(node.attributes);
         let id;
         let classes = [] as string[];
@@ -65,81 +61,23 @@ export function html2hsml(html: string): any {
         pointer[pointer.length - 1].push(hsmlNode);
         nodePath.push(hsmlNode);
         pointer = hsmlNode;
-        // console.log(">>>", jsonmlPath.map(x => x[0]));
     };
 
-    parser.onclosetag = tag => {
-        // console.log("close:\t", JSON.stringify(tag));
+    parser.onclosetag = _ => {
         const currentNode = nodePath.pop();
 
         let children = currentNode[currentNode.length - 1];
         if (children.length === 0) {
             currentNode.pop(); // remove children
         } else if (children.length === 1) {
-            if (typeof children[0] === "string") {
+            if (typeof children[0] === "string") { // convert ["text"] -> "text"
                 currentNode[currentNode.length - 1] = children[0];
             }
         }
+        // set pointer to previous node
         pointer = nodePath[nodePath.length - 1];
-        // console.log(">>>", jsonmlPath.map(x => x[0]));
     };
-    // parser.onattribute = attr => {
-    //     // console.log("attr:\t", attr);
-    // };
-    // parser.onend = () => {
-    //     console.log("end:\t");
-    // };
 
     parser.write(html.trim()).close();
-
     return root[0][0];
 }
-
-// const html = '<body>Hello<hr id="id1" class="c1 c2" data-x="dx"  data-y="dy" />, <em name="world">world</em>!</body>';
-// console.log(html, "\n");
-
-// const jsonml = html2jsonml(html);
-
-// // console.log(jsonml);
-// // console.log(JSON.stringify(jsonml));
-// console.log(JSON.stringify(jsonml, null, 4));
-
-
-
-
-// function mkIndent(count) {
-//     let indent = "";
-//     for (let i = 0; i < count; i++) {
-//         indent += "    ";
-//     }
-//     return indent;
-// }
-
-// function jsonmlPrint(node, depth=0) {
-//     switch (node.constructor) {
-//         case Array:
-//             console.log(mkIndent(depth) + "[" + JSON.stringify(node[0]) +
-//                 (node.length > 1 ? "," : ""));
-//             for (const i = 1; i < node.length; i++) {
-//                 jsonmlPrint(node[i], depth + 1);
-//             }
-//             console.log(mkIndent(depth) + "]");
-//             break;
-//         // case Function:
-//         //     break;
-//         case String:
-//             console.log(mkIndent(depth) + JSON.stringify(node) +
-//                 (node.length > 1 ? "," : ""));
-//             break;
-//         default: // Object
-//             console.log(mkIndent(depth) + JSON.stringify(node) +
-//                 (node.length > 2 ? "," : ""));
-//     }
-// }
-
-// const html = '<body>Hello<hr id="id1" class="c1 c2" data-x="dx"  data-y="dy" />, <em name="world">world</em>!</body>';
-// console.log(html, "\n");
-
-// const jsonml = html2jsonml(html);
-
-// jsonmlPrint(jsonml);
