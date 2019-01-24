@@ -26,36 +26,45 @@ class App extends XWidget<AppState> {
     view(state: AppState, action: Action): Hsmls {
         return [
             ["div",
-                { styles: { display: "inline-block", width: "50%" } },
-                [["textarea",
-                    {
-                        placeholder: "Place your html here :)",
-                        rows: 30,
-                        styles: {
-                            width: "100%",
+                { styles: { display: "inline-block", width: "50%", padding: "10px" } },
+                [
+                    ["h2", "HTML (input)"],
+                    ["textarea",
+                        {
+                            placeholder: "Place your html here :)",
+                            rows: 30,
+                            styles: {
+                                width: "100%",
+                                ["min-height"]: "350px"
+                            },
+                            on: ["input", Actions.onChange, e => (e.target as any).value]
                         },
-                        on: ["input", Actions.onChange, e => (e.target as any).value]
-                    },
-                    state.html
-                ]]
+                        state.html
+                    ]
+                ]
             ],
             ["div",
-                { styles: { display: "inline-block", width: "50%" } },
-                [["textarea",
-                    {
-                        placeholder: "HSML output will be displayed here",
-                        rows: 30,
-                        styles: {
-                            width: "100%",
-                        }
-                    },
-                    state.hsml
-                ]]
+                { styles: { display: "inline-block", width: "50%", padding: "10px" } },
+                [
+                    ["h2", "HSML (output)"],
+                    ["textarea",
+                        {
+                            placeholder: "HSML output will be displayed here",
+                            readonly: true,
+                            rows: 30,
+                            styles: {
+                                width: "100%",
+                                ["min-height"]: "350px"
+                            }
+                        },
+                        state.hsml
+                    ]
+                ]
             ],
             ["div",
                 { styles: { width: "100%", textAlign: "center" }},
                 [
-                    ["button", { on: ["click", Actions.onConvert] }, "Convert"]
+                    ["button.button", { on: ["click", Actions.onConvert] }, "Convert to HSML"]
                 ]
             ]
             // ["p", [
