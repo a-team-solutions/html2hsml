@@ -3,7 +3,8 @@ import * as sax from "sax";
 export function prettify(hsml: any): string {
     return JSON.stringify(hsml, null, 4)
                 .replace(/\[\s+"/mg, `["`)
-                .replace(/",\s+"(.*)"\s+]/mg, ', "$1"');
+                .replace(/",\s+"(.*)"\s+]/mg, ', "$1"]')
+                .replace(/,\s+\[(\s+)\[/mg, ', [$1[');
 }
 
 export function html2hsml(html: string) {
