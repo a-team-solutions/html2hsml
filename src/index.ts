@@ -1,6 +1,6 @@
 import { XWidget, Action } from "prest-lib/dist/hsml-xwidget";
 import { Hsmls, HsmlAttrOnData } from "prest-lib/dist/hsml";
-import { html2hsml } from "./html2hsml";
+import { html2hsml, prettify } from "./html2hsml";
 
 interface AppState {
     html: string;
@@ -88,7 +88,8 @@ class App extends XWidget<AppState> {
             case Actions.onConvert:
                 try {
                     const hsml = html2hsml(this.state.html);
-                    const prettyHsml = JSON.stringify(hsml, null, 4).replace(/\[\s+"/mg, `["`);
+                    const prettyHsml = prettify(hsml);
+
                     this.state.hsml = prettyHsml;
                     this.state.err = "";
                 } catch(err) {

@@ -1,6 +1,12 @@
 import * as sax from "sax";
 
-export function html2hsml(html: string): any {
+export function prettify(hsml: any): string {
+    return JSON.stringify(hsml, null, 4)
+                .replace(/\[\s+"/mg, `["`)
+                .replace(/",\s+"(.*)"\s+]/mg, ', "$1"');
+}
+
+export function html2hsml(html: string) {
     const strict = false; // set to false for html-mode
     const parser = sax.parser(strict, {});
 
