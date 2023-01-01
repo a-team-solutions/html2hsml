@@ -20,11 +20,11 @@
   },
   "homepage": "https://github.com/dderevjanik/html2hsml#readme",
   "devDependencies": {
-    "ts-loader": "^5.3.3",
+    "ts-loader": "^9.4.2",
     "ts-node": "^8.0.1",
     "typescript": "^3.2.4",
-    "webpack": "^4.29.0",
-    "webpack-cli": "^3.2.1"
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
   },
   "dependencies": {
     "@types/sax": "^1.0.1",
